@@ -18,6 +18,8 @@ import { formatDateTimeValue } from '@/utils/format';
 import { classifyModels } from '@/utils/models';
 import { STORAGE_KEY_AUTH } from '@/utils/constants';
 import { INLINE_LOGO_JPEG } from '@/assets/logoInline';
+// fork 自研：更新检查卡片（详见 src/features/updateCheck/）
+import { UpdateCheckCard } from '@/features/updateCheck';
 import iconGemini from '@/assets/icons/gemini.svg';
 import iconClaude from '@/assets/icons/claude.svg';
 import iconMeta from '@/assets/icons/meta.svg';
@@ -346,6 +348,8 @@ export function SystemPage() {
             </div>
           </div>
         </Card>
+
+        <UpdateCheckCard />
 
         <Card title={t('system_info.quick_links_title')}>
           <p className={styles.sectionDescription}>{t('system_info.quick_links_desc')}</p>

@@ -1,0 +1,21 @@
+{
+  "title": "更新检查",
+  "check_button": "检查更新",
+  "backend_title": "后端 CLIProxyAPI",
+  "panel_title": "管理中心面板",
+  "backend_releases": "后端发布记录",
+  "panel_releases": "面板发布记录",
+  "panel_diff": "查看面板改动对比",
+  "unknown_version": "未知",
+  "status_unknown": "未检查",
+  "status_latest": "已是最新",
+  "status_update": "有新版本",
+  "status_error": "获取失败",
+  "row_update_hint": "上游已发布新版本，可自行合并后重新构建。",
+  "row_error_hint": "未能获取最新版本号，多为网络问题，可稍后重试。",
+  "row_unknown_hint": "点击右上角「检查更新」获取最新版本号。",
+  "checked_at": "上次检查：{{time}}",
+  "never_checked": "尚未检查",
+  "hint": "仅提示新版本，不会自动升级。",
+  "hint_update": "检测到新版本：请自行 merge upstream 后重新构建部署，本面板不会自动升级。"
+}

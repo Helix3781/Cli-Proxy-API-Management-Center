@@ -1,0 +1,21 @@
+{
+  "title": "Update Check",
+  "check_button": "Check for updates",
+  "backend_title": "Backend CLIProxyAPI",
+  "panel_title": "Management Center panel",
+  "backend_releases": "Backend releases",
+  "panel_releases": "Panel releases",
+  "panel_diff": "View panel diff",
+  "unknown_version": "Unknown",
+  "status_unknown": "Not checked",
+  "status_latest": "Up to date",
+  "status_update": "Update available",
+  "status_error": "Fetch failed",
+  "row_update_hint": "A newer upstream release is available. Merge it yourself and rebuild.",
+  "row_error_hint": "Could not fetch the latest version, usually a network issue. Retry later.",
+  "row_unknown_hint": "Click “Check for updates” in the top-right corner.",
+  "checked_at": "Last checked: {{time}}",
+  "never_checked": "Never checked",
+  "hint": "Notification only — never upgrades automatically.",
+  "hint_update": "New version detected: merge upstream and rebuild yourself. This panel never auto-upgrades."
+}
