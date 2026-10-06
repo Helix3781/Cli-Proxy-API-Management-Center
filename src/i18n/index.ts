@@ -13,6 +13,7 @@ import zhCNUpdateCheck from './locales/updateCheck/zh-CN.json';
 import zhTWUpdateCheck from './locales/updateCheck/zh-TW.json';
 import enUpdateCheck from './locales/updateCheck/en.json';
 import ruUpdateCheck from './locales/updateCheck/ru.json';
+import vi from './locales/vi.json';
 import { getInitialLanguage } from '@/utils/language';
 
 i18n.use(initReactI18next).init({
@@ -21,6 +22,7 @@ i18n.use(initReactI18next).init({
     'zh-TW': { translation: zhTW, updateCheck: zhTWUpdateCheck },
     en: { translation: en, updateCheck: enUpdateCheck },
     ru: { translation: ru, updateCheck: ruUpdateCheck },
+    vi: { translation: vi },
   },
   lng: getInitialLanguage(),
   fallbackLng: 'zh-CN',
