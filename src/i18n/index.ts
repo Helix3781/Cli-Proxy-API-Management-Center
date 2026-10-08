@@ -14,6 +14,7 @@ import zhTWUpdateCheck from './locales/updateCheck/zh-TW.json';
 import enUpdateCheck from './locales/updateCheck/en.json';
 import ruUpdateCheck from './locales/updateCheck/ru.json';
 import vi from './locales/vi.json';
+import ko from './locales/ko.json';
 import { getInitialLanguage } from '@/utils/language';
 
 i18n.use(initReactI18next).init({
@@ -23,6 +24,7 @@ i18n.use(initReactI18next).init({
     en: { translation: en, updateCheck: enUpdateCheck },
     ru: { translation: ru, updateCheck: ruUpdateCheck },
     vi: { translation: vi },
+    ko: { translation: ko },
   },
   lng: getInitialLanguage(),
   fallbackLng: 'zh-CN',
