@@ -11,6 +11,8 @@
   "status_latest": "已是最新",
   "status_update": "有新版本",
   "status_error": "获取失败",
+  "local_modified": "本地修改",
+  "latest_version": "最新版本",
   "row_update_hint": "上游已发布新版本，可自行合并后重新构建。",
   "row_error_hint": "未能获取最新版本号，多为网络问题，可稍后重试。",
   "row_unknown_hint": "点击右上角「检查更新」获取最新版本号。",

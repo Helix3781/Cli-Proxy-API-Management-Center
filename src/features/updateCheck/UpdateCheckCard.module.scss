@@ -46,10 +46,16 @@
 
 .versions {
   display: flex;
-  align-items: baseline;
+  flex-direction: column;
+  gap: 6px;
+  font-family: $font-mono;
+}
+
+.currentRow {
+  display: flex;
+  align-items: center;
   gap: 8px;
   flex-wrap: wrap;
-  font-family: $font-mono;
 }
 
 .current {
@@ -59,8 +65,29 @@
   color: var(--text-primary);
 }
 
-.arrow {
-  font-size: 13px;
+.localBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.25;
+  border-radius: 6px;
+  background: rgba($primary-color, 0.1);
+  border: 1px solid rgba($primary-color, 0.2);
+  color: var(--primary-color);
+  white-space: nowrap;
+}
+
+.latestRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.latestLabel {
+  font-size: 12px;
   color: var(--text-secondary);
 }
 

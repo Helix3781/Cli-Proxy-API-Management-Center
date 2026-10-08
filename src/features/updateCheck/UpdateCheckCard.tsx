@@ -4,6 +4,7 @@
  * 上游把「检查更新」做成 API 版本号旁边的一个 ghost 小按钮，很容易被忽略。
  * 这里改成独立卡片：后端与面板两行并排，各自带状态徽标，有新版本时整行高亮。
  *
+ * 版本显示：当前版本下方显示最新版本（纵向排列），并标注本地修改状态。
  * 只做提示，不触发任何升级动作 —— 升级由维护者自行 merge upstream 后重新构建。
  */
 
@@ -38,6 +39,7 @@ interface RowDefinition {
   status: UpdateStatus;
   releasesUrl: string;
   releasesLabel: string;
+  hasLocalChanges: boolean;
 }
 
 export function UpdateCheckCard() {
@@ -64,6 +66,7 @@ export function UpdateCheckCard() {
         status: backendStatus,
         releasesUrl: BACKEND_RELEASES_URL,
         releasesLabel: t('updateCheck:backend_releases'),
+        hasLocalChanges: backendVersion.includes('-g') || backendVersion.includes('+'),
       },
       {
         id: 'panel',
@@ -73,6 +76,7 @@ export function UpdateCheckCard() {
         status: panelStatus,
         releasesUrl: PANEL_RELEASES_URL,
         releasesLabel: t('updateCheck:panel_releases'),
+        hasLocalChanges: panelVersion.includes('-g') || panelVersion.includes('+'),
       },
     ],
     [t, backendVersion, panelVersion, snapshot.backendLatest, snapshot.panelLatest, backendStatus, panelStatus]
@@ -122,18 +126,21 @@ export function UpdateCheckCard() {
             </div>
 
             <div className={styles.versions}>
-              <span className={styles.current}>{row.current || unknownVersionLabel}</span>
+              <div className={styles.currentRow}>
+                <span className={styles.current}>{row.current || unknownVersionLabel}</span>
+                {row.hasLocalChanges && (
+                  <span className={styles.localBadge}>{t('updateCheck:local_modified')}</span>
+                )}
+              </div>
               {row.latest && (
-                <>
-                  <span className={styles.arrow} aria-hidden="true">
-                    →
-                  </span>
+                <div className={styles.latestRow}>
+                  <span className={styles.latestLabel}>{t('updateCheck:latest_version')}</span>
                   <span
                     className={`${styles.latest} ${row.status === 'update' ? styles.latestUpdate : ''}`}
                   >
                     {row.latest}
                   </span>
-                </>
+                </div>
               )}
             </div>
 

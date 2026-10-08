@@ -26,6 +26,10 @@ fork 把它提升为一张独立卡片，同时检查**后端**和**面板**两�
 
 **行为约定：只提示，不自动升级。** 检测到新版本时提示「请自行 merge upstream 后重新构建部署」。
 
+**版本显示优化：**
+- 当前版本下方显示最新版本（纵向排列）
+- 自动检测并标注「本地修改」标识（版本号含 `-g` 或 `+` 时显示）
+
 ### 对上游文件的改动（合并冲突面）
 
 只有 2 个文件、共 +13/−4 行：
@@ -39,9 +43,55 @@ fork 把它提升为一张独立卡片，同时检查**后端**和**面板**两�
 
 ---
 
-## 2. 合并上游更新
+## 2. 无损升级机制
+
+### 面板无损升级
+
+**问题：** 后端 `updater.go` 会自动从 GitHub 下载最新 `management.html` 覆盖本地文件，导致 fork 修改丢失。
+
+**解决方案：** 修改 `~/cliproxyapi-deploy/src/internal/managementasset/updater.go`，添加 `isOfficialRelease()` 检测：
+
+1. 计算本地 `management.html` 的 SHA256
+2. 与 GitHub 最新 release 的 digest 比较
+3. 如果不匹配，遍历最近 10 个 releases，检查本地文件是否与任何一个历史版本匹配
+4. 如果匹配 → 官方版本，可以安全覆盖
+5. 如果不匹配 → 用户修改过，跳过自动更新
+
+**代码位置：** `~/cliproxyapi-deploy/src/internal/managementasset/updater.go` 中的 `isOfficialRelease()` 函数
+
+### CLI 无损升级
+
+**问题：** CLI 是编译好的二进制文件，无法直接「无损升级」。
+
+**解决方案：**
+1. 版本检测页面自动检测并标注「本地修改」标识（版本号含 `-g` 或 `+` 时显示）
+2. 升级后需要重新编译（源码在 `~/cliproxyapi-deploy/src/`）
+3. **必须用 ARM64 Docker 编译**（容器 `cli-proxyapi-plus:8.0.x` 是 arm64 镜像，
+   宿主编译出的 Mach-O 或 amd64 ELF 都会 `exec format error`）：
 
 ```bash
+cd ~/cliproxyapi-deploy/src
+COMMIT=$(git rev-parse --short HEAD)
+BUILT_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+docker run --rm --platform linux/arm64 -v ~/cliproxyapi-deploy/src:/src -w /src \
+  golang:1.26 bash -c "\
+    CGO_ENABLED=1 GOOS=linux GOARCH=arm64 \
+    go build -ldflags '-X main.Version=<如 v8.0.20> -X main.Commit=$COMMIT -X main.BuildDate=$BUILT_AT' \
+    -o CLIProxyAPIPlus ./cmd/server/"
+docker cp ~/cliproxyapi-deploy/src/CLIProxyAPIPlus cli-proxy-api:/CLIProxyAPI/CLIProxyAPIPlus
+docker restart cli-proxy-api
+docker exec cli-proxy-api /CLIProxyAPI/CLIProxyAPIPlus --version   # 验证版本号
+```
+
+> ⚠️ **`-ldflags` 注入版本号必不可少**：不注入的话 `main.Version` 默认为 `dev`，
+> 面板读响应头 `X-CPA-VERSION` 会显示 `dev`，版本检查卡片全部失效。
+
+---
+
+## 3. 合并上游更新
+
+```bash
+cd ~/cpa-mc-fork
 git fetch upstream
 git merge upstream/main        # 或 git rebase upstream/main
 bun install                    # 上游可能改了依赖
@@ -53,11 +103,12 @@ bun run verify                 # 测试 + lint + tsc + build 一条龙
 
 ---
 
-## 3. 构建与部署
+## 4. 构建与部署
 
 构建产物是单文件 HTML（`vite-plugin-singlefile`），约 2.8 MB：
 
 ```bash
+cd ~/cpa-mc-fork
 bun run build                  # → dist/index.html
 ```
 
@@ -88,7 +139,18 @@ docker cp ~/cliproxyapi-deploy/static/management.html \
 
 ---
 
-## 4. 后续自研功能往哪放
+## 5. 后续自研功能往哪放
 
 新功能一律新建 `src/features/<name>/`，i18n 走独立命名空间 `src/i18n/locales/<name>/`，
 对上游文件只加「import + 一行挂载」。保持这个纪律，merge upstream 才不会痛。
+
+---
+
+## 6. 本地修改标识说明
+
+版本检测页面会自动检测并标注「本地修改」标识：
+
+- **后端（CLI）：** 版本号含 `-g` 或 `+` 时显示（如 `v8.0.16-2-ga2976eb`）
+- **面板：** 版本号含 `-g` 或 `+` 时显示（如 `v1.25.4-2-gfbb5bf4`）
+
+这个标识提醒用户：当前版本包含本地修改，升级时需要保留这些修改。
